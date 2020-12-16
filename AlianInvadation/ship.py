@@ -13,22 +13,25 @@ class Ship():
         #将方形容器放置在坐标的最底层
         self.rect.centerx = self.screen_rect.centerx
         self.rect.bottom = self.screen_rect.bottom
+        #设置移动标志
+        self.m_left = False
+        self.m_right = False
+        self.m_up = False
+        self.m_down = False
+
+    def update(self):
+        """
+            更新飞船的位置
+        """     
+        if self.m_left == True:
+            self.rect.centerx -= 1
+        elif self.m_right == True:
+            self.rect.centerx += 1
+        elif self.m_up == True:
+            self.rect.centery -= 1
+        elif self.m_down == True:
+            self.rect.centery += 1
         
     def blitme(self):
         #将图像放置在方形容器上
-        self.screen.blit(self.image, self.rect)
-
-class Cat():
-    """
-        猫
-    """
-    def __init__(self, screen):
-        self.screen = screen
-        self.image = pygame.image.load('/Users/liuly/code/pythonProject/pythonPracticeProject/AlianInvadation/Src/爱宠05.png')
-        self.rect = self.image.get_rect()
-        self.screen_rect = self.screen.get_rect()
-        self.rect.centerx = self.screen_rect.centerx
-        self.rect.centery = self.screen_rect.centery
-
-    def blitme(self):
         self.screen.blit(self.image, self.rect)

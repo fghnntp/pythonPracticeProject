@@ -1,7 +1,7 @@
 import sys
 import pygame
 from settings import Settings
-from ship import Ship, Cat
+from ship import Ship
 import game_functions as gf
 
 def run_game():
@@ -12,12 +12,12 @@ def run_game():
     pygame.init() 
     screen = pygame.display.set_mode((ai_settings.screen_width, ai_settings.screen_height))
     ship = Ship(screen)
-    cat = Cat(screen)
     pygame.display.set_caption('Alien Invasion')
     while True:
         #循环检查事件
-        gf.check_event()
-        gf.update_sccreen(ai_settings, screen, ship, cat)
+        gf.check_event(ship)
+        ship.update()
+        gf.update_sccreen(ai_settings, screen, ship)
         
     
 if __name__ == "__main__":
