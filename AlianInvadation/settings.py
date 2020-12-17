@@ -6,3 +6,4 @@ class Settings():
         self.screen_width = 1600
         self.screen_height = 900
         self.bg_color = (240, 248, 255)
+        self.speed_factor = 2.5
