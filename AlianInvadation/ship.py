@@ -9,7 +9,7 @@ class Ship():
         self.speed_factor = ai_settings.speed_factor
         self.screen = screen
         #获取图片，飞船的方形抽象，屏幕的方形抽象
-        self.image = pygame.image.load('/Users/liuly/code/pythonProject/pythonPracticeProject/AlianInvadation/Src/飞船.png')
+        self.image = pygame.image.load('Src/飞船.png')
         self.rect = self.image.get_rect()
         self.screen_rect = screen.get_rect()
         #将方形容器放置在坐标的最底层
