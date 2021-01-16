@@ -5,6 +5,7 @@ from settings import Settings
 from ship import Ship
 from alien import Alien
 import game_functions as gf
+from game_stats import GameStats
 
 
 def run_game():
@@ -19,14 +20,15 @@ def run_game():
     ship = Ship(screen, ai_settings)
     aliens = Group()
     bullets = Group()
-    gf.create_fleet(ai_settings, screen, aliens)
+    stats = GameStats(ai_settings)
+    gf.create_fleet(ai_settings, screen, ship, aliens)
     while True:
         # 循环检查事件
         gf.check_event(ai_settings, screen, ship, bullets)
-        ship.update()
-        gf.update_bullets(bullets)
-        gf.check_fleet_direction(ai_settings, aliens)
-        gf.update_aliens(aliens)
+        if stats.game_active:
+            ship.update()
+            gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
+            gf.update_aliens(ai_settings, stats, screen, ship, aliens, bullets)
         gf.update_screen(ai_settings, screen, ship, aliens, bullets)
         
 if __name__ == "__main__":

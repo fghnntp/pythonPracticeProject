@@ -30,7 +30,7 @@ class Ship():
         # 对上下左右键进行响应
         if self.m_left == True and self.rect.left > self.screen_rect.left:
             self.centerx -= self.speed_factor
-        if self.m_right == True and self.rect.right < self.screen_rect.right:
+        elif self.m_right == True and self.rect.right < self.screen_rect.right:
             self.centerx += self.speed_factor
         if self.m_up == True and self.rect.top > self.screen_rect.top:
             self.centery -= self.speed_factor
@@ -38,6 +38,12 @@ class Ship():
             self.centery += self.speed_factor
         self.rect.centerx = self.centerx
         self.rect.centery = self.centery
+
+    def center_ship(self):
+        self.rect.centerx = self.screen_rect.centerx
+        self.rect.bottom = self.screen_rect.bottom
+        self.centerx = float(self.rect.centerx)
+        self.centery = float(self.rect.centery)
         
     def blitme(self):
         """
