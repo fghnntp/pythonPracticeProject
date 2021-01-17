@@ -45,7 +45,7 @@ class SlideRect(Sprite):
         super().__init__()
         self.screen = screen
         self.screen_rect = screen.get_rect()
-        self.rect = pygame.Rect(0, 0, 25, 50)
+        self.rect = pygame.Rect(0, 0, 25, 100)
         self.rect.right = self.screen_rect.right
         self.rect.centery = self.screen_rect.centery
         self.y = float(self.rect.y)
@@ -135,6 +135,9 @@ failed_bullet = 0
 game_active = True
 button = Button(screen, "Play")
 pygame.mouse.set_visible(False)
+pre_speed = 2
+speed = 2
+speed_up_factor = 2
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -168,6 +171,7 @@ while True:
     if game_active:
         if failed_bullet > 3:
             game_active = False
+            speed = pre_speed
             pygame.mouse.set_visible(True)
         screen.fill((240, 248, 255))
         bird.update()
@@ -181,6 +185,8 @@ while True:
         if len(rects) == 0:
             rects.empty()
             new_rect = SlideRect(screen) 
+            speed *= speed_up_factor
+            new_rect.speed = speed
             rects.add(new_rect)
         bird.blitme()
         for rect in rects:
