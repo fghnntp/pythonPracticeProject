@@ -1,8 +1,17 @@
 import sys
 import pygame
+import json
 from bullet import Bullet
 from alien import Alien
 from time import sleep
+
+def read_config(stats):
+    """
+    read the config and set them
+    """
+    with open('config.json', 'r') as f_obj:
+        settings = json.loads(f_obj.read())
+        stats.high_score = settings["high_score"]
 
 def check_event(ai_settings, screen, stats, sb, play_button, aliens,
                 ship, bullets):
@@ -11,7 +20,7 @@ def check_event(ai_settings, screen, stats, sb, play_button, aliens,
     """
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            sys.exit()
+            game_out(stats)
         elif event.type == pygame.KEYDOWN:
             check_keydown_events(event, ai_settings, screen, stats, sb, ship,
                                  aliens, bullets)
@@ -21,7 +30,69 @@ def check_event(ai_settings, screen, stats, sb, play_button, aliens,
             mouse_x, mouse_y = pygame.mouse.get_pos()
             check_play_button(ai_settings, screen, stats, sb, play_button, ship,
                               aliens, bullets, mouse_x, mouse_y)
-                        
+    
+def check_keydown_events(event, ai_settings, screen, stats, sb, ship,
+                         aliens, bullets):
+    """
+    response the key down
+    """
+    if event.key == pygame.K_RIGHT:
+        ship.m_right = True
+    if event.key == pygame.K_LEFT:
+        ship.m_left = True
+    if event.key == pygame.K_UP:
+        ship.m_up = True
+    if event.key == pygame.K_DOWN:
+        ship.m_down = True
+    if event.key == pygame.K_SPACE:
+        fire_bullet(ai_settings, screen, ship, bullets)
+    if event.key == pygame.K_q:
+        game_out(stats)
+    if event.key == pygame.K_p:
+        start_game(ai_settings, screen, stats, sb, ship, aliens, bullets)
+
+def check_keyup_events(event, ship):
+    """
+    response the key up
+    """
+    if event.key == pygame.K_RIGHT:
+        ship.m_right = False
+    if event.key == pygame.K_LEFT:
+        ship.m_left = False
+    if event.key == pygame.K_UP:
+        ship.m_up = False
+    if event.key == pygame.K_DOWN:
+        ship.m_down = False
+
+def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens,
+                      bullets, mouse_x, mouse_y):
+    """
+    creating a new game when player trigger the play button
+    """
+    button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
+    if button_clicked and not stats.game_active:
+        ai_settings.initialize_dynamic_settings()
+        start_game(ai_settings, screen, stats, sb, ship, aliens, bullets)
+
+def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship,
+                                  aliens, bullets):
+    """
+    check if hte bullet and aliens collided
+    """
+    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
+    if collisions:
+        for aliens in collisions.values():
+            stats.score += ai_settings.alien_points * len(aliens)
+            sb.prep_score()
+        check_high_score(stats, sb)
+    if len(aliens) == 0:
+        bullets.empty()
+        ai_settings.increase_speed()
+        # level up
+        stats.level += 1
+        sb.prep_level()
+        create_fleet(ai_settings, screen, ship, aliens)
+
 def start_game(ai_settings, screen, stats, sb, ship, aliens, bullets):
     """
     restart the game
@@ -41,49 +112,6 @@ def start_game(ai_settings, screen, stats, sb, ship, aliens, bullets):
     # create aliens and reset the ship
     create_fleet(ai_settings, screen, ship, aliens)
     ship.center_ship()
-
-def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens,
-                      bullets, mouse_x, mouse_y):
-    """
-    creating a new game when player trigger the play button
-    """
-    button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
-    if button_clicked and not stats.game_active:
-        ai_settings.initialize_dynamic_settings()
-        start_game(ai_settings, screen, stats, sb, ship, aliens, bullets)
-    
-def check_keydown_events(event, ai_settings, screen, stats, sb, ship,
-                         aliens, bullets):
-    """
-    response the key down
-    """
-    if event.key == pygame.K_RIGHT:
-        ship.m_right = True
-    if event.key == pygame.K_LEFT:
-        ship.m_left = True
-    if event.key == pygame.K_UP:
-        ship.m_up = True
-    if event.key == pygame.K_DOWN:
-        ship.m_down = True
-    if event.key == pygame.K_SPACE:
-        fire_bullet(ai_settings, screen, ship, bullets)
-    if event.key == pygame.K_q:
-        sys.exit()
-    if event.key == pygame.K_p:
-        start_game(ai_settings, screen, stats, sb, ship, aliens, bullets)
-
-def check_keyup_events(event, ship):
-    """
-    response the key up
-    """
-    if event.key == pygame.K_RIGHT:
-        ship.m_right = False
-    if event.key == pygame.K_LEFT:
-        ship.m_left = False
-    if event.key == pygame.K_UP:
-        ship.m_up = False
-    if event.key == pygame.K_DOWN:
-        ship.m_down = False
 
 def update_screen(ai_settings, screen, stats, sb, ship, aliens,
                   bullets, play_button):
@@ -118,25 +146,6 @@ def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets):
     check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship,
                                   aliens, bullets)
     
-def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship,
-                                  aliens, bullets):
-    """
-    check if hte bullet and aliens collided
-    """
-    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
-    if collisions:
-        for aliens in collisions.values():
-            stats.score += ai_settings.alien_points * len(aliens)
-            sb.prep_score()
-        check_high_score(stats, sb)
-    if len(aliens) == 0:
-        bullets.empty()
-        ai_settings.increase_speed()
-        # level up
-        stats.level += 1
-        sb.prep_level()
-        create_fleet(ai_settings, screen, ship, aliens)
-
 def fire_bullet(ai_settings, screen, ship, bullets):
     """
     add new bullet in a bullets Group to fire in case
@@ -184,7 +193,6 @@ def change_fleet_direction(ai_settings, aliens):
     for alien in aliens.sprites():
         alien.y += ai_settings.alien_drop_speed
     ai_settings.fleet_direction *= -1
-    
 
 def ship_hit(ai_settings, stats, screen, sb, ship, aliens, bullets):
     """
@@ -233,3 +241,13 @@ def check_high_score(stats, sb):
     if stats.score > stats.high_score:
         stats.high_score = stats.score
         sb.prep_high_score()
+
+def game_out(stats):
+    """
+    save the higest score when the game out
+    """
+    settings = {"high_score": stats.high_score}
+    with open('config.json', 'w') as f_obj:
+        f_obj.write(json.dumps(settings))
+    sys.exit()
+        

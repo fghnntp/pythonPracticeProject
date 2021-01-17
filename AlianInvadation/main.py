@@ -1,5 +1,6 @@
 import sys
 import pygame
+import json
 from pygame.sprite import Group
 from settings import Settings
 from ship import Ship
@@ -25,6 +26,7 @@ def run_game():
     aliens = Group()
     bullets = Group()
     stats = GameStats(ai_settings)
+    read_config(stats)
     sb = Scoreboard(ai_settings, screen, stats)
     gf.create_fleet(ai_settings, screen, ship, aliens)
     
