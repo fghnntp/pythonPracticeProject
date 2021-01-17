@@ -1,10 +1,12 @@
 import pygame
+from pygame.sprite import Sprite
 
-class Ship():
+class Ship(Sprite):
     """
     宇宙飞船
     """
     def __init__(self, screen, ai_settings):
+        super().__init__()
         # 初始化参数
         self.speed_factor = ai_settings.speed_factor
         self.screen = screen
@@ -40,8 +42,8 @@ class Ship():
         self.rect.centery = self.centery
 
     def center_ship(self):
-        self.rect.centerx = self.screen_rect.centerx
         self.rect.bottom = self.screen_rect.bottom
+        self.rect.centerx = self.screen_rect.centerx
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
         
