@@ -26,7 +26,7 @@ def run_game():
     aliens = Group()
     bullets = Group()
     stats = GameStats(ai_settings)
-    read_config(stats)
+    gf.read_config(stats)
     sb = Scoreboard(ai_settings, screen, stats)
     gf.create_fleet(ai_settings, screen, ship, aliens)
     
