@@ -25,6 +25,8 @@ class Alien(Sprite):
         self.rect.y = self.rect.height
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
+        self.x_y_z = 100
+        
     
     def blitme(self):
         """
