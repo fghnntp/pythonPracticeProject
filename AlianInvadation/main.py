@@ -25,10 +25,10 @@ def run_game():
     ship = Ship(screen, ai_settings)
     aliens = Group()
     bullets = Group()
-    # stats = GameStats(ai_settings)
+    stats = GameStats(ai_settings)
     gf.read_config(stats)
     sb = Scoreboard(ai_settings, screen, stats)
-    # gf.create_fleet(ai_settings, screen, ship, aliens)
+    gf.create_fleet(ai_settings, screen, ship, aliens)
     
     while True:
         # 循环检查事件
