@@ -1,0 +1,3 @@
+matplotlib库用来生成点位图
+pygal用来生成矢量图
+request模块则可以进行网络相关的请求
